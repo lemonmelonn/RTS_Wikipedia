@@ -1,0 +1,101 @@
+OLD ARCHITECTURE/
+├── Cargo.toml                # Workspace configuration
+├── shared_core/              # Common logic (Zero-Copy, Logic, Types)
+│   ├── Cargo.toml
+│   └── src/
+│       ├── lib.rs            # Main library entry
+│       ├── models.rs         # Zero-copy structs using lifetimes <'a> [cite: 79]
+│       ├── leaderboard.rs    # Shared resource (Mutex/RwLock/Atomics) [cite: 91, 92]
+│       └── metrics.rs        # Jitter and drift measurement logic [cite: 88, 105]
+├── arch_async/               # Architecture 1: Tokio-based [cite: 75]
+│   ├── Cargo.toml
+│   └── src/
+│       └── main.rs           # Async ingestion and processing loop
+├── arch_threaded/            # Architecture 2: std::thread-based [cite: 76]
+│   ├── Cargo.toml
+│   └── src/
+│       └── main.rs           # OS-thread ingestion and processing loop
+├── benches/                  # Criterion.rs benchmarking suite [cite: 104]
+│   └── comparison_bench.rs
+├── scripts/                  # Analysis and simulation scripts [cite: 112, 113]
+│   └── plot_latencies.py
+├── logs/                     # High-precision overflow and timing logs [cite: 77, 114]
+└── reports/                  # Drafts of your 4000-word research paper [cite: 115, 116]
+
+
+
+
+wikipedia_monitor/
+├── Cargo.toml          # Combined dependencies for both
+├── src/
+│   └── lib.rs          # (Optional) Shared code like WikipediaEdit struct
+└── src/bin/
+    ├── arch_async.rs   # Your Tokio code
+    └── arch_threaded.rs # Your Multi-threaded code
+
+
+---------------------------------------------------------------------------------------------------
+
+COMPONENTS
+
+ingestion script
+- implement zero-copy parsing. An A+ grade requires proof (via valgrind or custom
+allocators) that heap allocations are minimized during the "hot path" of processing
+- use Struct of Array for ingestion
+- record time (to use for scheduling drift)
+- apply "Network Reset" if no data received for 10 seconds
+- (not sure) apply "Fail Safe" mode if jitter or processing lags exceeds threshold, must trigger degraded mode
+
+
+
+async (tokio) processing
+- 2ms completion deadline (start from the moment it leaves ingestion channel)
+- implement Backpressure management using bounded channels (the
+system must drop the oldest packet and log a high-precision timestamped "Overflow Event" is channel reaches capacity)
+
+multi-threaded processing
+- 2ms completion deadline
+- implement Backpressure management using bounded channels (the
+system must drop the oldest packet and log a high-precision timestamped "Overflow Event" is channel reaches capacity)
+
+metrics 
+- measure schedule drift and jitter
+
+leaderboard
+
+report logs
+
+latency plots (python?)
+- Analysis must move beyond "average latency." Top marks are reserved for students who use
+p50, p90, and p99 percentiles to describe system jitter and scheduling drift
+
+bench (Criterion.rs) 
+- comparing async and multi-threaded
+- produce a rigorous quantitative comparison proving which architecture (Async vs. Threaded) handles Tail Latency (p99) better during high-velocity spikes
+
+- analysis must move beyond "average latency." Top marks are reserved for students who use
+p50, p90, and p99 percentiles to describe system jitter and scheduling drift
+
+
+---------------------------------------------------------------------------------------------------
+
+QUESTIONS
+
+1. Ask how is the architecture (single ingestion or one for each architecture?)
+2. Bounded channel in ingestion or processing script?
+2. Where does user, bot, domain extraction happen?
+2. Where does priority sorting happen?
+2. Fail safe mode is in the two processing files or ingestion file?
+3. How to transfer data from one script to another?
+4. How to record the statistics metrics.rs file?
+
+Will there be separate metrics files, leaderboards for different architectures?
+
+---------------------------------------------------------------------------------------------------
+
+
+
+- Bounded queue must use static dispatch (true Zero-cost extraction)
+- Must use stack over heap?
+- Use Struct of Array (SoA) for the ingestion
+
