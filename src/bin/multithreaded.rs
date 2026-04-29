@@ -18,7 +18,11 @@ const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Replace 'wikipedia_monitor' with the name in your Cargo.toml
-use rts_wiki::{print_top_three, process_event, record_jitter, update_degraded_mode, WikipediaEdit};
+use rts_wiki::{print_final_leaderboard, print_final_statistics, print_top_three, process_event, record_jitter, update_degraded_mode, RunStats, WikipediaEdit};
+
+// Set run duration here
+static MINUTES: u64 = 1;
+const RUN_DURATION: Duration = Duration::from_secs(MINUTES * 10);
 
 fn start_blocking_ingestion(
     tx_human: mpsc::SyncSender<(String, Instant)>,
@@ -74,11 +78,18 @@ fn start_blocking_ingestion(
 
 fn main() {
     // 1. Bounded Synchronous Channels (Capacity of 100 each)
-    let (tx_human, rx_human) = mpsc::sync_channel::<(String, Instant)>(1000);
-    let (tx_bot, rx_bot) = mpsc::sync_channel::<(String, Instant)>(1000);
+    let (tx_human, rx_human) = mpsc::sync_channel::<(String, Instant)>(100);
+    let (tx_bot, rx_bot) = mpsc::sync_channel::<(String, Instant)>(100);
     let leaderboard = Arc::new(Mutex::new(HashMap::<String, u64>::new()));
+    let print_leaderboard = Arc::new(AtomicBool::new(true));
     let human_latencies = Arc::new(Mutex::new(Vec::<Duration>::new()));
     let bot_latencies = Arc::new(Mutex::new(Vec::<Duration>::new()));
+    let human_jitters = Arc::new(Mutex::new(Vec::<Duration>::new()));
+    let bot_jitters = Arc::new(Mutex::new(Vec::<Duration>::new()));
+    let human_drifts = Arc::new(Mutex::new(Vec::<Duration>::new()));
+    let bot_drifts = Arc::new(Mutex::new(Vec::<Duration>::new()));
+    let run_stats = Arc::new(Mutex::new(RunStats::default()));
+    let start_time = Instant::now();
 
     // 2. Spawn the Ingestion Thread
     thread::spawn(move || {
@@ -86,8 +97,12 @@ fn main() {
     });
 
     let leaderboard_printer = Arc::clone(&leaderboard);
+    let print_leaderboard_flag = Arc::clone(&print_leaderboard);
     thread::spawn(move || loop {
         thread::sleep(Duration::from_secs(3));
+        if !print_leaderboard_flag.load(Ordering::SeqCst) {
+            break;
+        }
         print_top_three(&leaderboard_printer);
     });
 
@@ -95,6 +110,9 @@ fn main() {
 
     let mut last_received = Instant::now();
     loop {
+        if start_time.elapsed() >= RUN_DURATION {
+            break;
+        }
         if let Ok((raw_json, enqueue_time)) = rx_human.try_recv() {
             handle_packet(
                 raw_json,
@@ -102,6 +120,11 @@ fn main() {
                 &leaderboard,
                 &human_latencies,
                 &bot_latencies,
+                &human_jitters,
+                &bot_jitters,
+                &human_drifts,
+                &bot_drifts,
+                &run_stats,
             );
             last_received = Instant::now();
             continue;
@@ -115,6 +138,11 @@ fn main() {
                     &leaderboard,
                     &human_latencies,
                     &bot_latencies,
+                    &human_jitters,
+                    &bot_jitters,
+                    &human_drifts,
+                    &bot_drifts,
+                    &run_stats,
                 );
                 last_received = Instant::now();
                 continue;
@@ -131,6 +159,11 @@ fn main() {
                     &leaderboard,
                     &human_latencies,
                     &bot_latencies,
+                    &human_jitters,
+                    &bot_jitters,
+                    &human_drifts,
+                    &bot_drifts,
+                    &run_stats,
                 );
                 last_received = Instant::now();
             }
@@ -143,6 +176,22 @@ fn main() {
             Err(mpsc::RecvTimeoutError::Disconnected) => break,
         }
     }
+
+    print_leaderboard.store(false, Ordering::SeqCst);
+    println!("\n============= [RUN COMPLETE] Duration: {:?}============\n", RUN_DURATION);
+    print_final_leaderboard(&leaderboard);
+
+    if let Ok(stats) = run_stats.lock() {
+        print_final_statistics(
+            &stats,
+            &human_latencies,
+            &bot_latencies,
+            &human_jitters,
+            &bot_jitters,
+            &human_drifts,
+            &bot_drifts,
+        );
+    }
 }
 
 fn handle_packet(
@@ -151,6 +200,11 @@ fn handle_packet(
     leaderboard: &Arc<Mutex<HashMap<String, u64>>>,
     human_latencies: &Arc<Mutex<Vec<Duration>>>,
     bot_latencies: &Arc<Mutex<Vec<Duration>>>,
+    human_jitters: &Arc<Mutex<Vec<Duration>>>,
+    bot_jitters: &Arc<Mutex<Vec<Duration>>>,
+    human_drifts: &Arc<Mutex<Vec<Duration>>>,
+    bot_drifts: &Arc<Mutex<Vec<Duration>>>,
+    run_stats: &Arc<Mutex<RunStats>>,
 ) {
     let dequeue_time = Instant::now();
     let drift = dequeue_time.duration_since(enqueue_time);
@@ -158,6 +212,10 @@ fn handle_packet(
     TOTAL_PACKETS.fetch_add(1, Ordering::SeqCst);
 
     if let Ok(edit) = serde_json::from_str::<WikipediaEdit>(&raw_json) {
+        let drift_list = if edit.bot { bot_drifts } else { human_drifts };
+        if let Ok(mut list) = drift_list.lock() {
+            list.push(drift);
+        }
         let jitter = if edit.bot {
             record_jitter(bot_latencies, latency, JITTER_WINDOW_SIZE)
         } else {
@@ -166,6 +224,13 @@ fn handle_packet(
 
         if let Some(jitter) = jitter {
             update_degraded_mode(jitter, JITTER_THRESHOLD_MS, &DEGRADED_MODE);
+            let jitter_list = if edit.bot { bot_jitters } else { human_jitters };
+            if let Ok(mut list) = jitter_list.lock() {
+                list.push(jitter);
+            }
+        }
+        if let Ok(mut stats) = run_stats.lock() {
+            stats.record(drift, latency, violated, jitter);
         }
         if violated {
             TOTAL_VIOLATIONS.fetch_add(1, Ordering::SeqCst);
