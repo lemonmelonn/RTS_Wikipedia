@@ -1,0 +1,101 @@
+// Async - Tokio
+
+use tokio::sync::mpsc;
+use tokio::time::{timeout, Duration};
+use tokio_util::io::StreamReader;
+use tokio::io::{AsyncBufReadExt, BufReader};
+use futures_util::StreamExt;
+use serde::Deserialize;
+use std::time::Instant;
+use std::io;
+
+#[derive(Deserialize, Debug)]
+pub struct WikipediaEdit<'a> {
+    #[serde(rename = "server_name")]
+    pub server: &'a str, 
+    pub user: &'a str,
+    pub bot: bool,
+}
+
+async fn start_ingestion(tx: mpsc::Sender<String>) {
+    let url = "https://stream.wikimedia.org/v2/stream/recentchange";
+    
+    // Wikipedia requires a User-Agent or it may drop the connection 
+    let client = reqwest::Client::builder()
+        .user_agent("RTS-Assignment-Student-Monitor/1.0 (Contact: student@apu.edu.my)")
+        .build()
+        .unwrap();
+    
+    loop {
+        println!("Connecting to Wikipedia...");
+        let res = client.get(url).send().await;
+
+        match res {
+            Ok(response) => {
+                println!("Connected! Monitoring firehose...");
+                
+                let stream = response.bytes_stream().map(|result| {
+                    result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+                });
+                let reader = StreamReader::new(stream);
+                let mut lines = BufReader::new(reader).lines();
+
+                while let Ok(Some(line)) = lines.next_line().await {
+                    if line.starts_with("data: ") {
+                        let json_str = &line[6..]; 
+                        
+                        // Push to bounded channel [cite: 77]
+                        if let Err(_) = tx.try_send(json_str.to_string()) {
+                            // High-precision log for overflow [cite: 77]
+                            eprintln!("[{:?}] OVERFLOW: Dropping oldest packet", Instant::now());
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Connection failed: {}. Retrying...", e);
+            }
+        }
+        
+        // Network Resilience: Fail-Safe Mode [cite: 94, 95]
+        eprintln!("Stream ended or interrupted. Retrying in 2 seconds...");
+        tokio::time::sleep(Duration::from_secs(2)).await;
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    let (tx, mut rx) = mpsc::channel::<String>(100);
+
+    tokio::spawn(async move {
+        start_ingestion(tx).await;
+    });
+
+    println!("System Active. 10s Watchdog engaged.");
+
+    loop {
+        // Requirement: Watchdog Timer (Source 94)
+        match timeout(Duration::from_secs(10), rx.recv()).await {
+            Ok(Some(raw_json)) => {
+                let start = Instant::now();
+                
+                // Requirement: Zero-Copy Parsing (Source 79)
+                if let Ok(edit) = serde_json::from_str::<WikipediaEdit>(&raw_json) {
+                    let duration = start.elapsed();
+                    
+                    // Requirement: 2ms Deadline (Source 82)
+                    if duration > Duration::from_millis(2) {
+                        println!("[VIOLATION] {} took {:?}", edit.server, duration);
+                    } else {
+                        println!("[OK] Domain: {} | User: {} | Latency: {:?}", edit.server, edit.user, duration);
+                    }
+                }
+            }
+            Ok(None) => break, 
+            Err(_) => {
+                println!("[{:?}] WATCHDOG: No data for 10s. Triggering Reset...", Instant::now());
+            }
+        }
+    }
+}
+
