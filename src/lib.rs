@@ -135,7 +135,7 @@ pub fn print_final_statistics(
     bot_drifts: &Arc<Mutex<Vec<Duration>>>,
 ) {
     if stats.total_packets == 0 {
-        println!("[STATS] No packets processed.");
+        println!("\n[STATS] No packets processed.");
         return;
     }
 
@@ -233,6 +233,7 @@ pub fn print_final_statistics(
             percentile_duration(&v, 99.0),
         )
     });
+
     let human_latency_percentiles = human_latencies.lock().ok().map(|v| {
         (
             percentile_duration(&v, 50.0),
@@ -247,6 +248,7 @@ pub fn print_final_statistics(
             percentile_duration(&v, 99.0),
         )
     });
+    
     let human_jitter_percentiles = human_jitters.lock().ok().map(|v| {
         (
             percentile_duration(&v, 50.0),
@@ -377,7 +379,7 @@ pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     // Sort by count descending, then by domain name ascending
     items.sort_by(|a, b| b.1.cmp(a.1).then_with(|| a.0.cmp(b.0)));
 
-    println!("\n[FINAL LEADERBOARD - TOP 10]");
+    println!("\n========== [FINAL LEADERBOARD - TOP 10] ==========");
     println!("+------+--------------------------------+----------+");
     println!("| {:<4} | {:<30} | {:>8} |", "Rank", "Domain", "Edits");
     println!("+------+--------------------------------+----------+");

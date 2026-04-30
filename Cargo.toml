@@ -15,5 +15,11 @@ futures-util = "0.3"
 criterion = { version = "0.5", features = ["html_reports"] }
 
 [[bench]]
-name = "wiki_bench"   # This must match the filename in /benches
-harness = false      # Required so Criterion can take over the main function
+name = "syncbench"
+path = "benches/syncbench.rs"
+harness = false
+
+[[bench]]
+name = "comparison"
+path = "benches/comparison.rs"
+harness = false

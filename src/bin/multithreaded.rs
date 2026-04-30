@@ -17,7 +17,7 @@ static DEGRADED_MODE: AtomicBool = AtomicBool::new(false);
 const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
-// Replace 'wikipedia_monitor' with the name in your Cargo.toml
+// Import core logic from library
 use rts_wiki::{print_final_leaderboard, print_final_statistics, print_top_three, process_event, record_jitter, update_degraded_mode, RunStats, WikipediaEdit};
 
 // Set run duration here
@@ -36,7 +36,7 @@ fn start_blocking_ingestion(
         .unwrap();
     
     loop {
-        println!("[THREADED SENSOR] Connecting...");
+        println!("[THREADED SENSOR] Connecting to Wikipedia...");
         let res = client.get(url).send();
 
         match res {
