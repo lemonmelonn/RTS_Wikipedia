@@ -5,11 +5,12 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+// Struct to represent a Wikipedia edit event, deserialized from JSON
 #[derive(Deserialize, Debug)]
 pub struct WikipediaEdit<'a> {
     #[serde(rename = "server_name")]
-    pub server: &'a str, // zero-copy 
-    pub user: &'a str, // zero-copy
+    pub server: &'a str, // Zero-copy string slice for server name
+    pub user: &'a str, // Zero-copy string slice for user name
     pub bot: bool,
 }
 
@@ -31,12 +32,14 @@ pub fn process_event(
     (false, Duration::from_secs(0))
 }
 
+// Function to update the leaderboard counts for a given domain
 fn update_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>, domain: &str) {
     if let Ok(mut map) = leaderboard.lock() {
         *map.entry(domain.to_string()).or_insert(0) += 1;
     }
 }
 
+// Function to record jitter based on a sliding window of recent latencies
 pub fn record_jitter(
     latencies: &Arc<Mutex<Vec<Duration>>>,
     latency: Duration,
@@ -71,6 +74,8 @@ pub fn record_jitter(
     Some(Duration::from_nanos(variance.sqrt().round() as u64))
 }
 
+// Struct to hold running statistics for the current run
+// Including counts, sums, and max values for drift, latency, and jitter
 #[derive(Default)]
 pub struct RunStats {
     pub total_packets: u64,
@@ -84,6 +89,7 @@ pub struct RunStats {
     pub max_jitter: Duration,
 }
 
+// Method to record a new packet's stats into the running totals and update max values as needed
 impl RunStats {
     pub fn record(&mut self, drift: Duration, latency: Duration, violated: bool, jitter: Option<Duration>) {
         self.total_packets += 1;
@@ -108,6 +114,7 @@ impl RunStats {
     }
 }
 
+// Helper function to compute average duration from total nanoseconds and count
 fn avg_duration(sum_ns: u128, count: u64) -> Duration {
     if count == 0 {
         return Duration::from_secs(0);
@@ -115,6 +122,7 @@ fn avg_duration(sum_ns: u128, count: u64) -> Duration {
     Duration::from_nanos((sum_ns / count as u128) as u64)
 }
 
+// Helper function to compute the specified percentile from a list of durations
 fn percentile_duration(samples: &[Duration], percentile: f64) -> Option<Duration> {
     if samples.is_empty() {
         return None;
@@ -125,6 +133,8 @@ fn percentile_duration(samples: &[Duration], percentile: f64) -> Option<Duration
     sorted.get(rank).copied()
 }
 
+// Function to print the final statistics at the end of the run
+// Including total packets, violations, average/max latency, jitter, and drift for both human and bot packets
 pub fn print_final_statistics(
     stats: &RunStats,
     human_latencies: &Arc<Mutex<Vec<Duration>>>,
@@ -319,6 +329,7 @@ pub fn print_final_statistics(
     }
 }
 
+// Function to update degraded mode status based on jitter
 pub fn update_degraded_mode(jitter: Duration, threshold_ms: u64, degraded: &AtomicBool) {
     let threshold = Duration::from_millis(threshold_ms);
     let should_degrade = jitter > threshold;
@@ -331,6 +342,7 @@ pub fn update_degraded_mode(jitter: Duration, threshold_ms: u64, degraded: &Atom
     }
 }
 
+// Function to print the top 3 domains in the leaderboard, showing their edit counts
 pub fn print_top_three(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     let Ok(map) = leaderboard.lock() else {
         return;
@@ -365,6 +377,7 @@ pub fn print_top_three(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     println!("+--------------------------------+----------+\n");
 }
 
+// Function to print the final leaderboard at the end of the run, showing top 10 domains
 pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     let Ok(map) = leaderboard.lock() else {
         return;
@@ -401,4 +414,67 @@ pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     }
     
     println!("+------+--------------------------------+----------+\n");
+}
+
+// Shared packet handler for both async and threaded binaries
+pub fn handle_packet(
+    raw_json: String,
+    enqueue_time: Instant,
+    leaderboard: &Arc<Mutex<HashMap<String, u64>>>,
+    human_latencies: &Arc<Mutex<Vec<Duration>>>,
+    bot_latencies: &Arc<Mutex<Vec<Duration>>>,
+    human_jitters: &Arc<Mutex<Vec<Duration>>>,
+    bot_jitters: &Arc<Mutex<Vec<Duration>>>,
+    human_drifts: &Arc<Mutex<Vec<Duration>>>,
+    bot_drifts: &Arc<Mutex<Vec<Duration>>>,
+    run_stats: &Arc<Mutex<RunStats>>,
+    degraded_mode: &AtomicBool,
+    jitter_threshold_ms: u64,
+    jitter_window_size: usize,
+    total_packets: &std::sync::atomic::AtomicU64,
+    total_violations: &std::sync::atomic::AtomicU64,
+) {
+    let dequeue_time = Instant::now();
+    let drift = dequeue_time.duration_since(enqueue_time);
+    let (violated, latency) = process_event(&raw_json, dequeue_time, leaderboard);
+    total_packets.fetch_add(1, Ordering::SeqCst);
+
+    // Record drift in the appropriate list
+    if let Ok(edit) = serde_json::from_str::<WikipediaEdit>(&raw_json) {
+        let drift_list = if edit.bot { bot_drifts } else { human_drifts };
+        if let Ok(mut list) = drift_list.lock() {
+            list.push(drift);
+        }
+        let jitter = if edit.bot {
+            record_jitter(bot_latencies, latency, jitter_window_size)
+        } else {
+            record_jitter(human_latencies, latency, jitter_window_size)
+        };
+
+        // Update degraded mode status based on jitter and record jitter values
+        if let Some(jitter) = jitter {
+            update_degraded_mode(jitter, jitter_threshold_ms, degraded_mode);
+            let jitter_list = if edit.bot { bot_jitters } else { human_jitters };
+            if let Ok(mut list) = jitter_list.lock() {
+                list.push(jitter);
+            }
+        }
+        if let Ok(mut stats) = run_stats.lock() {
+            stats.record(drift, latency, violated, jitter);
+        }
+
+        // Log violations in red, normal packets in default color
+        if violated {
+            total_violations.fetch_add(1, Ordering::SeqCst);
+            println!(
+                "\x1b[31m[VIOLATION]\x1b[0m {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
+                edit.server, edit.bot, edit.user, drift, latency
+            );
+        } else {
+            println!(
+                "[OK] Server: {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
+                edit.server, edit.bot, edit.user, drift, latency
+            );
+        }
+    }
 }

@@ -1,3 +1,4 @@
+// Benchmarks comparing threaded vs async models for latency and p99 calculations in a simulated pipeline.
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::time::{Instant, Duration};
 use std::thread;
@@ -6,17 +7,20 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Mutex};
 use tokio::sync::{mpsc as tokio_mpsc, Mutex as TokioMutex};
 
+// Constants for the benchmarks
 const REQUESTS: usize = 50_000;
 const QUEUE_CAPACITY: usize = 256;
 const P99_WINDOW: usize = 1_000;
 const JITTER_THRESHOLD_NS: u128 = 5_000_000;
 
+// Helper function to compute the 99th percentile from a vector of latencies
 fn compute_p99(mut data: Vec<u128>) -> u128 {
     data.sort();
     let idx = (data.len() as f64 * 0.99) as usize;
     data[idx]
 }
 
+// Simulated threaded model: Spawns multiple threads to process requests and collects latencies.
 fn threaded_model() -> u128 {
     let latencies = Arc::new(Mutex::new(Vec::new()));
 
@@ -46,6 +50,7 @@ fn threaded_model() -> u128 {
     compute_p99(Arc::try_unwrap(latencies).unwrap().into_inner().unwrap())
 }
 
+// Simulated async model: Spawns multiple async tasks to process requests and collects latencies.
 fn async_model() -> u128 {
     let rt = Runtime::new().unwrap();
     let latencies = Arc::new(Mutex::new(Vec::new()));
@@ -80,6 +85,7 @@ struct QueueItem {
     is_bot: bool,
 }
 
+// Simualated threaded pipeline model
 fn threaded_pipeline_p99() -> u128 {
     let (tx, rx) = mpsc::sync_channel::<QueueItem>(QUEUE_CAPACITY);
     let degraded = Arc::new(AtomicBool::new(false));
@@ -129,6 +135,7 @@ fn threaded_pipeline_p99() -> u128 {
     compute_p99(Arc::try_unwrap(latencies).unwrap().into_inner().unwrap())
 }
 
+// Simulated async pipeline model
 fn async_pipeline_p99() -> u128 {
     let rt = Runtime::new().unwrap();
     let latencies = Arc::new(TokioMutex::new(Vec::with_capacity(REQUESTS)));
@@ -185,6 +192,7 @@ fn async_pipeline_p99() -> u128 {
     compute_p99(Arc::try_unwrap(latencies).unwrap().into_inner())
 }
 
+// Benchmarks for the threaded vs async p99 latency calculations.
 fn architecture_benchmark(c: &mut Criterion) {
     c.bench_function("Threaded_p99", |b| {
         b.iter(|| threaded_model())
@@ -195,6 +203,7 @@ fn architecture_benchmark(c: &mut Criterion) {
     });
 }
 
+// Benchmarks for the threaded vs async pipeline p99 latency calculations.
 fn pipeline_architecture_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("Threaded vs Async Pipeline p99");
     group.bench_function("Threaded_pipeline_p99", |b| {
@@ -206,5 +215,6 @@ fn pipeline_architecture_benchmark(c: &mut Criterion) {
     });
 }
 
+// Criterion group and main function to run the benchmarks
 criterion_group!(benches, architecture_benchmark, pipeline_architecture_benchmark);
 criterion_main!(benches);

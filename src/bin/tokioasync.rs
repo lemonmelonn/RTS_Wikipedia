@@ -22,7 +22,7 @@ const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Import core logic from library
-use rts_wiki::{print_final_leaderboard, print_final_statistics, print_top_three, process_event, record_jitter, update_degraded_mode, RunStats, WikipediaEdit};
+use rts_wiki::{handle_packet, print_final_leaderboard, print_final_statistics, print_top_three, RunStats, WikipediaEdit};
 
 // Set run duration here
 static MINUTES: u64 = 1;
@@ -36,7 +36,7 @@ async fn start_ingestion(
     
     // Wikipedia requires a User-Agent or it may drop the connection 
     let client = reqwest::Client::builder()
-        .user_agent("RTS-Assignment-Student-Monitor/1.0 (Contact: student@apu.edu.my)")
+        .user_agent("RTS-Assignment-Async-Monitor")
         .build()
         .unwrap();
     
@@ -54,6 +54,7 @@ async fn start_ingestion(
                 let reader = StreamReader::new(stream);
                 let mut lines = BufReader::new(reader).lines();
 
+                // Async loop: non-blocking, can yield to other tasks
                 while let Ok(Some(line)) = lines.next_line().await {
                     if line.starts_with("data: ") {
                         // 1. CAPTURE ARRIVAL TIME IMMEDIATELY
@@ -108,6 +109,7 @@ async fn main() {
         start_ingestion(tx_human, tx_bot).await;
     });
 
+    // Spawn the Leaderboard Printer Task
     let leaderboard_printer = Arc::clone(&leaderboard);
     let print_leaderboard_flag = Arc::clone(&print_leaderboard);
     tokio::spawn(async move {
@@ -127,7 +129,7 @@ async fn main() {
         if start_time.elapsed() >= RUN_DURATION {
             break;
         }
-        // Requirement: Watchdog Timer (Source 94)
+        // Requirement: Watchdog Timer
         // Priority: humans first. Only read bot channel when human channel is empty.
         if let Ok((raw_json, enqueue_time)) = rx_human.try_recv() {
             handle_packet(
@@ -141,10 +143,17 @@ async fn main() {
                 &human_drifts,
                 &bot_drifts,
                 &run_stats,
+                &DEGRADED_MODE,
+                JITTER_THRESHOLD_MS,
+                JITTER_WINDOW_SIZE,
+                &TOTAL_PACKETS,
+                &TOTAL_VIOLATIONS,
             );
             continue;
         }
 
+        // [WATCHDOG TIMER] Wait for next packet with a 10s timeout
+        // If no packets arrive, trigger a reset (print message and continue waiting).
         let next_packet = timeout(
             Duration::from_secs(10),
             async {
@@ -161,6 +170,7 @@ async fn main() {
         )
         .await;
 
+        // Handle the result of the timeout
         match next_packet {
             Ok(Some((raw_json, enqueue_time))) => handle_packet(
                 raw_json,
@@ -173,6 +183,11 @@ async fn main() {
                 &human_drifts,
                 &bot_drifts,
                 &run_stats,
+                &DEGRADED_MODE,
+                JITTER_THRESHOLD_MS,
+                JITTER_WINDOW_SIZE,
+                &TOTAL_PACKETS,
+                &TOTAL_VIOLATIONS,
             ),
             Ok(None) => break,
             Err(_) => {
@@ -181,6 +196,7 @@ async fn main() {
         }
     }
 
+    // Signal the full leaderboard printer to stop and print final results
     print_leaderboard.store(false, Ordering::SeqCst);
     println!("\n============= [RUN COMPLETE] Duration: {:?}============\n", RUN_DURATION);
     print_final_leaderboard(&leaderboard);
@@ -195,63 +211,6 @@ async fn main() {
             &human_drifts,
             &bot_drifts,
         );
-    }
-}
-
-fn handle_packet(
-    raw_json: String,
-    enqueue_time: Instant,
-    leaderboard: &Arc<Mutex<HashMap<String, u64>>>,
-    human_latencies: &Arc<Mutex<Vec<Duration>>>,
-    bot_latencies: &Arc<Mutex<Vec<Duration>>>,
-    human_jitters: &Arc<Mutex<Vec<Duration>>>,
-    bot_jitters: &Arc<Mutex<Vec<Duration>>>,
-    human_drifts: &Arc<Mutex<Vec<Duration>>>,
-    bot_drifts: &Arc<Mutex<Vec<Duration>>>,
-    run_stats: &Arc<Mutex<RunStats>>,
-) {
-    let dequeue_time = Instant::now();
-    let drift = dequeue_time.duration_since(enqueue_time);
-    let (violated, latency) = process_event(&raw_json, dequeue_time, leaderboard);
-    TOTAL_PACKETS.fetch_add(1, Ordering::SeqCst);
-
-    if let Ok(edit) = serde_json::from_str::<WikipediaEdit>(&raw_json) {
-        let drift_list = if edit.bot { bot_drifts } else { human_drifts };
-        if let Ok(mut list) = drift_list.lock() {
-            list.push(drift);
-        }
-        let jitter = if edit.bot {
-            record_jitter(bot_latencies, latency, JITTER_WINDOW_SIZE)
-        } else {
-            record_jitter(human_latencies, latency, JITTER_WINDOW_SIZE)
-        };
-
-        if let Some(jitter) = jitter {
-            update_degraded_mode(jitter, JITTER_THRESHOLD_MS, &DEGRADED_MODE);
-            let jitter_list = if edit.bot { bot_jitters } else { human_jitters };
-            if let Ok(mut list) = jitter_list.lock() {
-                list.push(jitter);
-            }
-        }
-        if let Ok(mut stats) = run_stats.lock() {
-            stats.record(drift, latency, violated, jitter);
-        }
-        if violated {
-            TOTAL_VIOLATIONS.fetch_add(1, Ordering::SeqCst);
-            println!(
-                "\x1b[31m[VIOLATION]\x1b[0m {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
-                edit.server, edit.bot, edit.user, drift, latency
-            );
-        } else {
-            println!(
-                "[OK] Server: {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
-                edit.server,
-                edit.bot,
-                edit.user,
-                drift,
-                latency
-            );
-        }
     }
 }
 
