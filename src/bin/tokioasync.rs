@@ -5,6 +5,7 @@ use tokio::time::{timeout, Duration};
 use tokio_util::io::StreamReader;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use futures_util::StreamExt;
+use std::fs::{create_dir_all, OpenOptions};
 use std::time::Instant;
 use std::io;
 use std::collections::HashMap;
@@ -22,7 +23,7 @@ const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Import core logic from library
-use rts_wiki::{handle_packet, print_final_leaderboard, print_final_statistics, print_top_three, RunStats, WikipediaEdit};
+use rts_wiki::{handle_packet, print_final_leaderboard, print_final_statistics, print_top_three, Logger, RunStats, WikipediaEdit};
 
 // Set run duration here
 static MINUTES: u64 = 1;
@@ -31,6 +32,7 @@ const RUN_DURATION: Duration = Duration::from_secs(MINUTES * 10);
 async fn start_ingestion(
     tx_human: mpsc::Sender<(String, Instant)>,
     tx_bot: mpsc::Sender<(String, Instant)>,
+    logger: Logger,
 ) {
     let url = "https://stream.wikimedia.org/v2/stream/recentchange";
     
@@ -41,12 +43,12 @@ async fn start_ingestion(
         .unwrap();
     
     loop {
-        println!("[ASYNC SENSOR] Connecting to Wikipedia...");
+        logger.logln("[ASYNC SENSOR] Connecting to Wikipedia...");
         let res = client.get(url).send().await;
 
         match res {
             Ok(response) => {
-                println!("Connected! Monitoring firehose...");
+                logger.logln("Connected! Monitoring firehose...");
                 
                 let stream = response.bytes_stream().map(|result| {
                     result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))
@@ -74,18 +76,21 @@ async fn start_ingestion(
                         };
 
                         if let Err(_) = send_result {
-                            eprintln!("[{:?}] OVERFLOW: Dropping packet", Instant::now());
+                            logger.elogln(&format!(
+                                "[{:?}] OVERFLOW: Dropping packet",
+                                Instant::now()
+                            ));
                         }
                     }
                 }
             }
             Err(e) => {
-                eprintln!("Connection failed: {}. Retrying...", e);
+                logger.elogln(&format!("Connection failed: {}. Retrying...", e));
             }
         }
         
         // Network Resilience: Fail-Safe Mode [cite: 94, 95]
-        eprintln!("Stream ended or interrupted. Retrying in 2 seconds...");
+        logger.elogln("Stream ended or interrupted. Retrying in 2 seconds...");
         tokio::time::sleep(Duration::from_secs(2)).await;
     }
 }
@@ -105,13 +110,24 @@ async fn main() {
     let run_stats = Arc::new(Mutex::new(RunStats::default()));
     let start_time = Instant::now();
 
+    let _ = create_dir_all("logs");
+    let log_file = OpenOptions::new()
+        .create(true)
+        .truncate(true)
+        .write(true)
+        .open("logs/asynclogs.txt")
+        .unwrap();
+    let logger = Logger::from_file(Arc::new(Mutex::new(log_file)));
+
+    let logger_ingest = logger.clone();
     tokio::spawn(async move {
-        start_ingestion(tx_human, tx_bot).await;
+        start_ingestion(tx_human, tx_bot, logger_ingest).await;
     });
 
     // Spawn the Leaderboard Printer Task
     let leaderboard_printer = Arc::clone(&leaderboard);
     let print_leaderboard_flag = Arc::clone(&print_leaderboard);
+    let logger_printer = logger.clone();
     tokio::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(2));
         loop {
@@ -119,11 +135,11 @@ async fn main() {
             if !print_leaderboard_flag.load(Ordering::SeqCst) {
                 break;
             }
-            print_top_three(&leaderboard_printer);
+            print_top_three(&leaderboard_printer, &logger_printer);
         }
     });
 
-    println!("System Active. 10s Watchdog engaged.");
+    logger.logln("Async System Active. 10s Watchdog engaged. Monitoring for 2ms deadlines...");
 
     loop {
         if start_time.elapsed() >= RUN_DURATION {
@@ -143,6 +159,7 @@ async fn main() {
                 &human_drifts,
                 &bot_drifts,
                 &run_stats,
+                &logger,
                 &DEGRADED_MODE,
                 JITTER_THRESHOLD_MS,
                 JITTER_WINDOW_SIZE,
@@ -172,34 +189,43 @@ async fn main() {
 
         // Handle the result of the timeout
         match next_packet {
-            Ok(Some((raw_json, enqueue_time))) => handle_packet(
-                raw_json,
-                enqueue_time,
-                &leaderboard,
-                &human_latencies,
-                &bot_latencies,
-                &human_jitters,
-                &bot_jitters,
-                &human_drifts,
-                &bot_drifts,
-                &run_stats,
-                &DEGRADED_MODE,
-                JITTER_THRESHOLD_MS,
-                JITTER_WINDOW_SIZE,
-                &TOTAL_PACKETS,
-                &TOTAL_VIOLATIONS,
-            ),
+            Ok(Some((raw_json, enqueue_time))) => {
+                handle_packet(
+                    raw_json,
+                    enqueue_time,
+                    &leaderboard,
+                    &human_latencies,
+                    &bot_latencies,
+                    &human_jitters,
+                    &bot_jitters,
+                    &human_drifts,
+                    &bot_drifts,
+                    &run_stats,
+                    &logger,
+                    &DEGRADED_MODE,
+                    JITTER_THRESHOLD_MS,
+                    JITTER_WINDOW_SIZE,
+                    &TOTAL_PACKETS,
+                    &TOTAL_VIOLATIONS,
+                );
+            }
             Ok(None) => break,
             Err(_) => {
-                println!("[{:?}] WATCHDOG: No data for 10s. Triggering Reset...", Instant::now());
+                logger.logln(&format!(
+                    "[{:?}] WATCHDOG: No data for 10s. Triggering Reset...",
+                    Instant::now()
+                ));
             }
         }
     }
 
     // Signal the full leaderboard printer to stop and print final results
     print_leaderboard.store(false, Ordering::SeqCst);
-    println!("\n============= [RUN COMPLETE] Duration: {:?}============\n", RUN_DURATION);
-    print_final_leaderboard(&leaderboard);
+    logger.logln(&format!(
+        "\n============= [RUN COMPLETE] Duration: {:?}============\n",
+        RUN_DURATION
+    ));
+    print_final_leaderboard(&leaderboard, &logger);
 
     if let Ok(stats) = run_stats.lock() {
         print_final_statistics(
@@ -210,6 +236,7 @@ async fn main() {
             &bot_jitters,
             &human_drifts,
             &bot_drifts,
+            &logger,
         );
     }
 }

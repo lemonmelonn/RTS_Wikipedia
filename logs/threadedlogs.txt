@@ -1,0 +1,372 @@
+Threaded System Active. 10s Watchdog engaged. Monitoring for 2ms deadlines...
+[THREADED SENSOR] Connecting to Wikipedia...
+Connected! Monitoring firehose...
+[LEADERBOARD] No data yet.
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 336.8µs | Latency: 198.2µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 20.6803ms | Latency: 65.6µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 20.8184ms | Latency: 70.3µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 266.5µs | Latency: 58.7µs
+[OK] Server: en.wikipedia.org | Bot: false | User: AutisticYapper | Drift: 795.6µs | Latency: 56.4µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 1.3324ms | Latency: 40.2µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 1.6206ms | Latency: 26.5µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 1.6688ms | Latency: 308µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 2.2704ms | Latency: 29.9µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Bienvenido Benny Kobayashi | Drift: 2.5472ms | Latency: 31.8µs
+[OK] Server: en.wikipedia.org | Bot: false | User: DeltaQuadBot | Drift: 2.77ms | Latency: 27µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.6388ms | Latency: 33.1µs
+[OK] Server: ca.wikipedia.org | Bot: true | User: EVA3.0 (bot) | Drift: 3.5081ms | Latency: 27.7µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.4483ms | Latency: 35.8µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.6682ms | Latency: 29µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 3.7084ms | Latency: 31.9µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 3.9381ms | Latency: 32.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: YannBot | Drift: 100.8699ms | Latency: 104.9µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 101.6386ms | Latency: 83.3µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 97.3µs | Latency: 78.6µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 463.7µs | Latency: 51.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Morogris | Drift: 983.3µs | Latency: 55µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 1.7245ms | Latency: 32.9µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.2238ms | Latency: 52µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 2.7179ms | Latency: 50.3µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.9654ms | Latency: 47.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 3.2182ms | Latency: 74.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.9377ms | Latency: 43.4µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 2.0463ms | Latency: 29.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 2.434ms | Latency: 45.1µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 461.8µs | Latency: 39.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 913.3µs | Latency: 69µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 1.1405ms | Latency: 38.6µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Alexander Abair | Drift: 142.3µs | Latency: 126.8µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 4.2287ms | Latency: 41.2µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 4.5687ms | Latency: 58.4µs
+[OK] Server: www.wikidata.org | Bot: true | User: William Avery Bot | Drift: 4.9402ms | Latency: 41.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 4.9283ms | Latency: 46.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 5.1067ms | Latency: 42.4µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 2.7961ms | Latency: 43.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 15.7314ms | Latency: 47.7µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 95.2µs | Latency: 29.7µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 313.8µs | Latency: 21.1µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 528.8µs | Latency: 23.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Rkieferbot | Drift: 729.4µs | Latency: 29µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 914.7µs | Latency: 36.6µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.1166ms | Latency: 24.8µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 96.9µs | Latency: 56.4µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 734.3µs | Latency: 87.6µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 1.1921ms | Latency: 36.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Wengier | Drift: 1.0547ms | Latency: 41.5µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 1.2164ms | Latency: 53.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 4.0262ms | Latency: 36.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.8669ms | Latency: 45.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 4.2754ms | Latency: 45.5µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 282.6µs | Latency: 31.1µs
+[OK] Server: meta.wikimedia.org | Bot: true | User: MastiBot | Drift: 3.7367ms | Latency: 40.6µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 1.4242ms | Latency: 28.7µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 1.6753ms | Latency: 42.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 1.7537ms | Latency: 29.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 1.824ms | Latency: 41.6µs
+[OK] Server: www.wikidata.org | Bot: true | User: CheWikibot | Drift: 1.6345ms | Latency: 54.1µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 1.689ms | Latency: 273.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Rkieferbot | Drift: 2.3202ms | Latency: 35.1µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 373.9µs | Latency: 54µs
+[OK] Server: en.wikipedia.org | Bot: false | User: AluminiumWithAnI | Drift: 756.2µs | Latency: 47.5µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 630.4µs | Latency: 88.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 176.5µs | Latency: 41.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: OptimusPrimeBot | Drift: 4.4938ms | Latency: 61.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 2.7077ms | Latency: 41.6µs
+[OK] Server: www.wikidata.org | Bot: false | User: Prosperosity | Drift: 306.6µs | Latency: 38.8µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 306.4µs | Latency: 60.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 3.7316ms | Latency: 53.9µs
+[OK] Server: fr.wikipedia.org | Bot: true | User: Bot de pluie | Drift: 4.2121ms | Latency: 64.4µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 4.5729ms | Latency: 41.4µs
+[OK] Server: fr.wikipedia.org | Bot: true | User: OrlodrimBot | Drift: 7.8289ms | Latency: 43.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 7.7751ms | Latency: 45.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 8.3891ms | Latency: 48.9µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 8.5945ms | Latency: 154.7µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 8.5153ms | Latency: 62.5µs
+[OK] Server: en.wikipedia.org | Bot: true | User: WP 1.0 bot | Drift: 9.1736ms | Latency: 38.5µs
+
+
+[LEADERBOARD] Top 3 Domains:
++--------------------------------+----------+
+| Domain                         |    Edits |
++--------------------------------+----------+
+| commons.wikimedia.org          |       40 |
+| zh.wikisource.org              |       13 |
+| ce.wikipedia.org               |       10 |
++--------------------------------+----------+
+
+[OK] Server: commons.wikimedia.org | Bot: false | User: Llann Wé² | Drift: 149.5µs | Latency: 91.5µs
+[OK] Server: ar.wikipedia.org | Bot: false | User: YAC-med-2010 | Drift: 859.4µs | Latency: 80.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 2.2364ms | Latency: 66.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 3.4167ms | Latency: 67.6µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 343.4µs | Latency: 49.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 1.6214ms | Latency: 53.5µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 1.4212ms | Latency: 39.7µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 1.1964ms | Latency: 32.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 1.449ms | Latency: 37.4µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 2.8492ms | Latency: 42µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 3.1637ms | Latency: 36.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 9.6674ms | Latency: 50.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 9.4129ms | Latency: 43.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 9.5122ms | Latency: 44µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 10.5898ms | Latency: 40.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 10.655ms | Latency: 90.4µs
+[OK] Server: mg.wiktionary.org | Bot: true | User: Bot-Jagwar | Drift: 9.848ms | Latency: 63.7µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 117.8µs | Latency: 75.8µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 388.3µs | Latency: 105.8µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 598.2µs | Latency: 47.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 646.6µs | Latency: 46µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 1.4685ms | Latency: 40.8µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ~2026-12239-39 | Drift: 1.8332ms | Latency: 74.8µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 1.9121ms | Latency: 54µs
+[OK] Server: en.wikipedia.org | Bot: false | User: HumanxAnthro | Drift: 1.4663ms | Latency: 112.9µs
+[OK] Server: iba.wikipedia.org | Bot: false | User: Song GK | Drift: 1.0824ms | Latency: 44.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 7.4553ms | Latency: 48.5µs
+[OK] Server: vi.wikipedia.org | Bot: true | User: InternetArchiveBot | Drift: 6.6166ms | Latency: 71.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.5131ms | Latency: 42.2µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.7273ms | Latency: 42.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.5024ms | Latency: 65.8µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 4.9583ms | Latency: 31.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.1502ms | Latency: 41.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 7.3877ms | Latency: 45.2µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 7.5899ms | Latency: 30.2µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 7.6253ms | Latency: 93.9µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 6.2478ms | Latency: 37µs
+[OK] Server: www.wikidata.org | Bot: false | User: Charp238 | Drift: 1.7826ms | Latency: 51.6µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 2.0502ms | Latency: 42.6µs
+[OK] Server: ja.wikipedia.org | Bot: false | User: Baudanbau20 | Drift: 1.9789ms | Latency: 28.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Nathannah | Drift: 2.0703ms | Latency: 28.5µs
+[OK] Server: en.wikipedia.org | Bot: false | User: AluminiumWithAnI | Drift: 2.2263ms | Latency: 43.9µs
+[OK] Server: en.wikipedia.org | Bot: false | User: AluminiumWithAnI | Drift: 2.1113ms | Latency: 28.6µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 5.1366ms | Latency: 33.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.1108ms | Latency: 35.2µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 5.0413ms | Latency: 27µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 5.0238ms | Latency: 29.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 4.9736ms | Latency: 53.9µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 4.5819ms | Latency: 30.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 3.9497ms | Latency: 42.4µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 3.6897ms | Latency: 30.9µs
+[OK] Server: he.wikipedia.org | Bot: true | User: EranBot | Drift: 3.4186ms | Latency: 30.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 3.1325ms | Latency: 26.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 2.8886ms | Latency: 25.4µs
+[OK] Server: tr.wikipedia.org | Bot: true | User: YBot | Drift: 2.5168ms | Latency: 35.7µs
+[OK] Server: en.wikipedia.org | Bot: false | User: ROALOUT | Drift: 1.1317ms | Latency: 47µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 1.3669ms | Latency: 61.7µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Edward056686 | Drift: 1.5887ms | Latency: 38.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 3.1684ms | Latency: 39.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 3.4353ms | Latency: 35.5µs
+[OK] Server: en.wikipedia.org | Bot: true | User: VWF bot | Drift: 3.6576ms | Latency: 39µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 3.9367ms | Latency: 33.9µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 3.8332ms | Latency: 34.8µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 3.9258ms | Latency: 45.8µs
+
+
+[LEADERBOARD] Top 3 Domains:
++--------------------------------+----------+
+| Domain                         |    Edits |
++--------------------------------+----------+
+| commons.wikimedia.org          |       56 |
+| zh.wikisource.org              |       24 |
+| ce.wikipedia.org               |       23 |
++--------------------------------+----------+
+
+[OK] Server: en.wikipedia.org | Bot: false | User: HumanxAnthro | Drift: 486.9µs | Latency: 71.8µs
+[OK] Server: www.wikidata.org | Bot: true | User: CheWikibot | Drift: 2.2177ms | Latency: 70.4µs
+[OK] Server: en.wikipedia.org | Bot: false | User: CyrusTheMediocre | Drift: 581.6µs | Latency: 48.5µs
+[OK] Server: ja.wikipedia.org | Bot: false | User: 柏尾菓子 | Drift: 482.6µs | Latency: 48.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 2.5749ms | Latency: 46.5µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Heroeswithmetaphors | Drift: 380.5µs | Latency: 48.4µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Oreocooke | Drift: 172.3µs | Latency: 51µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Rkieferbot | Drift: 3.4005ms | Latency: 69.3µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Diogenes99 | Drift: 105.5µs | Latency: 47.8µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 263.5µs | Latency: 48.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.6801ms | Latency: 45.1µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 2.2325ms | Latency: 82.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 2.2172ms | Latency: 63.7µs
+[OK] Server: ja.wikipedia.org | Bot: false | User: ~2026-26224-93 | Drift: 168.4µs | Latency: 45.4µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Ajheindel | Drift: 419.9µs | Latency: 29.7µs
+[OK] Server: zh.wikisource.org | Bot: false | User: Zbz53321374 | Drift: 182.5µs | Latency: 47.5µs
+[OK] Server: en.wikipedia.org | Bot: false | User: DeltaQuadBot | Drift: 271µs | Latency: 140.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 2.0749ms | Latency: 49.9µs
+[OK] Server: www.wikidata.org | Bot: false | User: AdamSeattle | Drift: 243.3µs | Latency: 70.2µs
+[OK] Server: en.wikipedia.org | Bot: false | User: UpTheOctave! | Drift: 260.5µs | Latency: 99.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 14.3141ms | Latency: 71.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 14.7451ms | Latency: 63.6µs
+[OK] Server: www.wikidata.org | Bot: false | User: ぴゅう太 | Drift: 185.4µs | Latency: 60µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 76.5453ms | Latency: 88.7µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 60.3689ms | Latency: 64.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 96.7482ms | Latency: 66.7µs
+[OK] Server: zh.wikisource.org | Bot: false | User: Zbz53321374 | Drift: 37.5µs | Latency: 26.7µs
+[OK] Server: zh.wikisource.org | Bot: false | User: Zbz53321374 | Drift: 470.2µs | Latency: 37.1µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 149.2µs | Latency: 61µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Rkieferbot | Drift: 1.9454ms | Latency: 39.3µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 2.2553ms | Latency: 41.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.6371ms | Latency: 47.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.9746ms | Latency: 21.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.9914ms | Latency: 20.7µs
+[OK] Server: en.wikipedia.org | Bot: false | User: DeltaQuadBot | Drift: 124.3µs | Latency: 16.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.9507ms | Latency: 14.6µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.3339ms | Latency: 13.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.0364ms | Latency: 14.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.8174ms | Latency: 25.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.3839ms | Latency: 20.6µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.1584ms | Latency: 14.9µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.0576ms | Latency: 14.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 102.4423ms | Latency: 60.9µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 201.6µs | Latency: 71.2µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Crowsus | Drift: 489.2µs | Latency: 53.6µs
+[OK] Server: es.wikipedia.org | Bot: false | User: Eddy Wardian | Drift: 1.0569ms | Latency: 18.9µs
+[OK] Server: en.wikipedia.org | Bot: false | User: CostalCal | Drift: 1.1742ms | Latency: 20.5µs
+[OK] Server: en.wikipedia.org | Bot: false | User: DeltaQuadBot | Drift: 347.6µs | Latency: 16.6µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 325.9µs | Latency: 24.4µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 4.6493ms | Latency: 28.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 3.7745ms | Latency: 25µs
+[OK] Server: ja.wiktionary.org | Bot: true | User: Naggybot | Drift: 1.896ms | Latency: 29.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 1.8655ms | Latency: 26.6µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 1.8303ms | Latency: 28.3µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 1.9705ms | Latency: 22.8µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 84.2µs | Latency: 77.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 776.9µs | Latency: 35.3µs
+[OK] Server: www.wikidata.org | Bot: true | User: Shuaib-bot | Drift: 1.0231ms | Latency: 34.1µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 95.5113ms | Latency: 66.4µs
+[OK] Server: en.wikipedia.org | Bot: false | User: CostalCal | Drift: 168.9µs | Latency: 44.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 716.7µs | Latency: 41.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 1.1947ms | Latency: 46.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 92.1772ms | Latency: 56.9µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 92.5268ms | Latency: 48.5µs
+
+
+[LEADERBOARD] Top 3 Domains:
++--------------------------------+----------+
+| Domain                         |    Edits |
++--------------------------------+----------+
+| commons.wikimedia.org          |       69 |
+| zh.wikisource.org              |       39 |
+| ce.wikipedia.org               |       34 |
++--------------------------------+----------+
+
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 116µs | Latency: 106.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 14.4173ms | Latency: 45.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 146.5µs | Latency: 49.3µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 406.4µs | Latency: 39.9µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 16.1566ms | Latency: 41.1µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 14.2851ms | Latency: 37.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 12.1349ms | Latency: 67.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 11.8496ms | Latency: 61.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 11.4491ms | Latency: 31.9µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 8.749ms | Latency: 32.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 9.1404ms | Latency: 42.1µs
+[OK] Server: fr.wikipedia.org | Bot: true | User: Bot de pluie | Drift: 8.3168ms | Latency: 38.1µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 617.1µs | Latency: 36.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 998.5µs | Latency: 581.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 13.5782ms | Latency: 30.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Crowsus | Drift: 222.6µs | Latency: 66.4µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 294.7µs | Latency: 49.7µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 4.4982ms | Latency: 58.2µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 3.8058ms | Latency: 51.6µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 3.2629ms | Latency: 40.6µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 744.8µs | Latency: 31.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Doc James | Drift: 68.9µs | Latency: 43.7µs
+[OK] Server: ja.wiktionary.org | Bot: true | User: Naggybot | Drift: 3.2253ms | Latency: 43µs
+[OK] Server: www.wikidata.org | Bot: true | User: CheWikibot | Drift: 3.7379ms | Latency: 57.3µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 1.9392ms | Latency: 57.4µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 135.6µs | Latency: 53.2µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 336.8µs | Latency: 34.5µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 1.0904ms | Latency: 41.4µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 900.6µs | Latency: 55.1µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: 2pattywhack27 | Drift: 82.7µs | Latency: 49.1µs
+[OK] Server: en.wikipedia.org | Bot: true | User: WP 1.0 bot | Drift: 845.9µs | Latency: 37.4µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 1.2249ms | Latency: 35.3µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 686.9µs | Latency: 34.1µs
+[OK] Server: id.wiktionary.org | Bot: true | User: OrophinBot | Drift: 113.0333ms | Latency: 64.5µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Gnomingstuff | Drift: 183.6µs | Latency: 113.2µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 595µs | Latency: 72.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 213.2µs | Latency: 73.5µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 483.7µs | Latency: 53.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 87.6623ms | Latency: 117.1µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 184.1µs | Latency: 216.6µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 94.788ms | Latency: 74.2µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 95.2298ms | Latency: 72.6µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 93.3112ms | Latency: 74µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 93.6625ms | Latency: 71.6µs
+[OK] Server: zh.wikipedia.org | Bot: false | User: YFdyh-bot | Drift: 162.2µs | Latency: 55.4µs
+[OK] Server: en.wikipedia.org | Bot: false | User: Ajheindel | Drift: 138.3µs | Latency: 68.7µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 78.2µs | Latency: 66.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 48.9981ms | Latency: 52.5µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: Emijrpbot | Drift: 35.9511ms | Latency: 39.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 34.1704ms | Latency: 39.8µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 34.1692ms | Latency: 44.9µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: Che-W-bot | Drift: 34.2883ms | Latency: 87.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 32.7421ms | Latency: 77.2µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 4.3573ms | Latency: 56.7µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.4139ms | Latency: 39µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 125.8µs | Latency: 44.4µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: DPLA bot | Drift: 15.7606ms | Latency: 75.8µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 1.2642ms | Latency: 58.5µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 88.9272ms | Latency: 57.4µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: 2pattywhack27 | Drift: 231.4µs | Latency: 48.1µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 12.0339ms | Latency: 54.7µs
+[OK] Server: ce.wikipedia.org | Bot: true | User: CheWikibot | Drift: 2.6835ms | Latency: 91.8µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.4356ms | Latency: 37.9µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 500.7µs | Latency: 36.2µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 989.5µs | Latency: 37.7µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 1.5986ms | Latency: 41µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.1045ms | Latency: 41.1µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 2.3566ms | Latency: 32.9µs
+[OK] Server: meta.wikimedia.org | Bot: true | User: MastiBot | Drift: 1.5211ms | Latency: 42.3µs
+[OK] Server: commons.wikimedia.org | Bot: false | User: Eric Duff | Drift: 209.7µs | Latency: 44.7µs
+[OK] Server: www.wikidata.org | Bot: false | User: Ikan | Drift: 89.2µs | Latency: 59.4µs
+[OK] Server: zh.wikisource.org | Bot: true | User: SuperGrey-bot | Drift: 9.2173ms | Latency: 47.3µs
+[OK] Server: commons.wikimedia.org | Bot: true | User: SchlurcherBot | Drift: 8.7293ms | Latency: 42.8µs
+
+
+[LEADERBOARD] Top 3 Domains:
++--------------------------------+----------+
+| Domain                         |    Edits |
++--------------------------------+----------+
+| commons.wikimedia.org          |      103 |
+| zh.wikisource.org              |       50 |
+| ce.wikipedia.org               |       44 |
++--------------------------------+----------+
+
+
+============= [RUN COMPLETE] Duration: 10s============
+
+
+========== [FINAL LEADERBOARD - TOP 10] ==========
++------+--------------------------------+----------+
+| Rank | Domain                         |    Edits |
++------+--------------------------------+----------+
+| 1    | commons.wikimedia.org          |      103 |
+| 2    | zh.wikisource.org              |       50 |
+| 3    | ce.wikipedia.org               |       44 |
+| 4    | en.wikipedia.org               |       35 |
+| 5    | www.wikidata.org               |       23 |
+| 6    | id.wiktionary.org              |        8 |
+| 7    | fr.wikipedia.org               |        3 |
+| 8    | ja.wikipedia.org               |        3 |
+| 9    | ja.wiktionary.org              |        2 |
+| 10   | meta.wikimedia.org             |        2 |
++------+--------------------------------+----------+
+
+
+==================== [FINAL STATISTICS] =====================
+
+[STATS] Packets: 282 | Violations: 0 (0.00%)
+
+======================= [DRIFT STATS] =======================
+[STATS] Human Drift avg/max: 765.643µs / 3.1637ms
+[STATS] Bot Drift avg/max: 13.663672ms / 113.0333ms
+[STATS] Human Drift p50/p90/p99: 461.8µs / 1.9121ms / 2.8492ms
+[STATS] Bot Drift p50/p90/p99: 3.8058ms / 34.2883ms / 101.6386ms
+
+======================= [LATENCY STATS] =======================
+[STATS] Human Latency avg/max: 63.465µs / 581.7µs
+[STATS] Bot Latency avg/max: 48.455µs / 273.8µs
+[STATS] Human Latency p50/p90/p99: 48.4µs / 99.3µs / 308µs
+[STATS] Bot Latency p50/p90/p99: 42.4µs / 71.8µs / 117.1µs
+
+======================= [JITTER STATS] =======================
+[STATS] Human Jitter avg/max (windowed): 57.14µs / 103.442µs
+[STATS] Bot Jitter avg/max (windowed): 26.699µs / 38.81µs
+[STATS] Human Jitter p50/p90/p99: 54.35µs / 73.797µs / 100.257µs
+[STATS] Bot Jitter p50/p90/p99: 30.07µs / 35.574µs / 38.025µs
