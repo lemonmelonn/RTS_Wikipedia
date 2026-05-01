@@ -7,7 +7,6 @@ use std::fs::{create_dir_all, OpenOptions};
 use std::io::{BufRead, BufReader};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 // Global counters to track performance
@@ -15,7 +14,7 @@ static TOTAL_PACKETS: AtomicU64 = AtomicU64::new(0);
 static TOTAL_VIOLATIONS: AtomicU64 = AtomicU64::new(0);
 static DEGRADED_MODE: AtomicBool = AtomicBool::new(false);
 
-const JITTER_THRESHOLD_MS: u64 = 1;
+const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Import core logic from library
@@ -57,10 +56,12 @@ fn start_blocking_ingestion(
                         let enqueue_time = Instant::now();
                         let json_str = line[6..].trim().to_string();
 
+                        // Parse JSON to determine if it's a bot or human edit
                         let is_bot = serde_json::from_str::<WikipediaEdit>(&json_str)
                             .map(|edit| edit.bot)
                             .unwrap_or(false);
 
+                        // Assign to appropriate queue based on bot/human classification
                         let send_result = if is_bot {
                             tx_bot.try_send((json_str, enqueue_time))
                         } else {
@@ -117,7 +118,7 @@ fn main() {
     let print_leaderboard_flag = Arc::clone(&print_leaderboard);
     let logger_printer = logger.clone();
     thread::spawn(move || loop {
-        thread::sleep(Duration::from_secs(2));
+        thread::sleep(Duration::from_secs(1));
         if !print_leaderboard_flag.load(Ordering::SeqCst) {
             break;
         }
@@ -131,6 +132,7 @@ fn main() {
         if start_time.elapsed() >= RUN_DURATION {
             break;
         }
+        // Priority: humans first. Only read bot channel when human channel is empty.
         if let Ok((raw_json, enqueue_time)) = rx_human.try_recv() {
             handle_packet(
                 raw_json,

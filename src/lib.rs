@@ -42,7 +42,8 @@ impl Logger {
     }
 }
 
-// Move the core analysis here so Criterion can call it
+// Function to process a single packet's JSON string
+// Update the leaderboard and computing latency
 pub fn process_event(
     raw_json: &str,
     processing_start: Instant,

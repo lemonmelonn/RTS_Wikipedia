@@ -10,16 +10,14 @@ use std::time::Instant;
 use std::io;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
-//use std::sync::Arc;
 
 // Global counters to track performance
 static TOTAL_PACKETS: AtomicU64 = AtomicU64::new(0);
 static TOTAL_VIOLATIONS: AtomicU64 = AtomicU64::new(0);
 static DEGRADED_MODE: AtomicBool = AtomicBool::new(false);
 
-const JITTER_THRESHOLD_MS: u64 = 1;
+const JITTER_THRESHOLD_MS: u64 = 2;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Import core logic from library
@@ -97,6 +95,7 @@ async fn start_ingestion(
 
 #[tokio::main]
 async fn main() {
+    // Create bounded channels with a capacity of 100
     let (tx_human, mut rx_human) = mpsc::channel::<(String, Instant)>(100);
     let (tx_bot, mut rx_bot) = mpsc::channel::<(String, Instant)>(100);
     let leaderboard = Arc::new(Mutex::new(HashMap::<String, u64>::new()));
@@ -129,7 +128,7 @@ async fn main() {
     let print_leaderboard_flag = Arc::clone(&print_leaderboard);
     let logger_printer = logger.clone();
     tokio::spawn(async move {
-        let mut interval = tokio::time::interval(Duration::from_secs(2));
+        let mut interval = tokio::time::interval(Duration::from_secs(1));
         loop {
             interval.tick().await;
             if !print_leaderboard_flag.load(Ordering::SeqCst) {
@@ -142,6 +141,7 @@ async fn main() {
     logger.logln("Async System Active. 10s Watchdog engaged. Monitoring for 2ms deadlines...");
 
     loop {
+        // Check for run duration
         if start_time.elapsed() >= RUN_DURATION {
             break;
         }
@@ -177,6 +177,7 @@ async fn main() {
                 if DEGRADED_MODE.load(Ordering::SeqCst) {
                     rx_human.recv().await
                 } else {
+                    // Prioritize human packets
                     tokio::select! {
                         biased;
                         packet = rx_human.recv() => packet,

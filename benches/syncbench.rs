@@ -1,4 +1,4 @@
-// Benchmarks for synchronization primitives: Mutex, RwLock, and AtomicUsize.
+// Benchmarks for synchronization primitives
 use criterion::{criterion_group, criterion_main, Criterion, black_box};
 use std::sync::{Arc, Mutex, RwLock};
 use std::sync::atomic::{AtomicUsize, Ordering};

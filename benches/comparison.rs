@@ -1,4 +1,4 @@
-// Benchmarks comparing threaded vs async models for latency and p99 calculations in a simulated pipeline.
+// Benchmarks for comparing threaded vs async models
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::time::{Instant, Duration};
 use std::thread;
