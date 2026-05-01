@@ -19,7 +19,7 @@ static TOTAL_PACKETS: AtomicU64 = AtomicU64::new(0);
 static TOTAL_VIOLATIONS: AtomicU64 = AtomicU64::new(0);
 static DEGRADED_MODE: AtomicBool = AtomicBool::new(false);
 
-const JITTER_THRESHOLD_MS: u64 = 2;
+const JITTER_THRESHOLD_MS: u64 = 1;
 const JITTER_WINDOW_SIZE: usize = 100;
 
 // Import core logic from library
