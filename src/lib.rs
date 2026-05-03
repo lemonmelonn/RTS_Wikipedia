@@ -1,19 +1,49 @@
 // src/lib.rs
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+// Struct to represent a Wikipedia edit event, deserialized from JSON
 #[derive(Deserialize, Debug)]
 pub struct WikipediaEdit<'a> {
     #[serde(rename = "server_name")]
-    pub server: &'a str, // zero-copy 
-    pub user: &'a str, // zero-copy
+    pub server: &'a str, // Zero-copy string slice for server name
+    pub user: &'a str, // Zero-copy string slice for user name
     pub bot: bool,
 }
 
-// Move the core analysis here so Criterion can call it
+#[derive(Clone)]
+pub struct Logger {
+    file: Arc<Mutex<File>>,
+}
+
+// Logger implementation to handle both console output and file logging in a thread-safe manner
+impl Logger {
+    pub fn from_file(file: Arc<Mutex<File>>) -> Self {
+        Self { file }
+    }
+
+    pub fn logln(&self, line: &str) {
+        println!("{}", line);
+        if let Ok(mut file) = self.file.lock() {
+            let _ = writeln!(file, "{}", line);
+        }
+    }
+
+    pub fn elogln(&self, line: &str) {
+        eprintln!("{}", line);
+        if let Ok(mut file) = self.file.lock() {
+            let _ = writeln!(file, "{}", line);
+        }
+    }
+}
+
+// Function to process a single packet's JSON string
+// Update the leaderboard and computing latency
 pub fn process_event(
     raw_json: &str,
     processing_start: Instant,
@@ -31,12 +61,14 @@ pub fn process_event(
     (false, Duration::from_secs(0))
 }
 
+// Function to update the leaderboard counts for a given domain
 fn update_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>, domain: &str) {
     if let Ok(mut map) = leaderboard.lock() {
         *map.entry(domain.to_string()).or_insert(0) += 1;
     }
 }
 
+// Function to record jitter based on a sliding window of recent latencies
 pub fn record_jitter(
     latencies: &Arc<Mutex<Vec<Duration>>>,
     latency: Duration,
@@ -71,6 +103,8 @@ pub fn record_jitter(
     Some(Duration::from_nanos(variance.sqrt().round() as u64))
 }
 
+// Struct to hold running statistics for the current run
+// Including counts, sums, and max values for drift, latency, and jitter
 #[derive(Default)]
 pub struct RunStats {
     pub total_packets: u64,
@@ -84,6 +118,7 @@ pub struct RunStats {
     pub max_jitter: Duration,
 }
 
+// Method to record a new packet's stats into the running totals and update max values as needed
 impl RunStats {
     pub fn record(&mut self, drift: Duration, latency: Duration, violated: bool, jitter: Option<Duration>) {
         self.total_packets += 1;
@@ -108,6 +143,7 @@ impl RunStats {
     }
 }
 
+// Helper function to compute average duration from total nanoseconds and count
 fn avg_duration(sum_ns: u128, count: u64) -> Duration {
     if count == 0 {
         return Duration::from_secs(0);
@@ -115,6 +151,7 @@ fn avg_duration(sum_ns: u128, count: u64) -> Duration {
     Duration::from_nanos((sum_ns / count as u128) as u64)
 }
 
+// Helper function to compute the specified percentile from a list of durations
 fn percentile_duration(samples: &[Duration], percentile: f64) -> Option<Duration> {
     if samples.is_empty() {
         return None;
@@ -125,6 +162,8 @@ fn percentile_duration(samples: &[Duration], percentile: f64) -> Option<Duration
     sorted.get(rank).copied()
 }
 
+// Function to print the final statistics at the end of the run
+// Including total packets, violations, average/max latency, jitter, and drift for both human and bot packets
 pub fn print_final_statistics(
     stats: &RunStats,
     human_latencies: &Arc<Mutex<Vec<Duration>>>,
@@ -133,9 +172,10 @@ pub fn print_final_statistics(
     bot_jitters: &Arc<Mutex<Vec<Duration>>>,
     human_drifts: &Arc<Mutex<Vec<Duration>>>,
     bot_drifts: &Arc<Mutex<Vec<Duration>>>,
+    logger: &Logger,
 ) {
     if stats.total_packets == 0 {
-        println!("\n[STATS] No packets processed.");
+        logger.logln("\n[STATS] No packets processed.");
         return;
     }
 
@@ -266,90 +306,133 @@ pub fn print_final_statistics(
 
     let violation_rate = (stats.total_violations as f64 / stats.total_packets as f64) * 100.0;
 
-    println!("\n==================== [FINAL STATISTICS] =====================");
-    println!(
+    logger.logln("\n==================== [FINAL STATISTICS] =====================");
+    logger.logln(&format!(
         "\n[STATS] Packets: {} | Violations: {} ({:.2}%)",
         stats.total_packets, stats.total_violations, violation_rate
-    );
+    ));
 
-    println!("\n======================= [DRIFT STATS] =======================");
-    println!("[STATS] Human Drift avg/max: {:?} / {:?}", human_avg_drift, max_human_drift);
-    println!("[STATS] Bot Drift avg/max: {:?} / {:?}", bot_avg_drift, max_bot_drift);
+    logger.logln("\n======================= [DRIFT STATS] =======================");
+    logger.logln(&format!(
+        "[STATS] Human Drift avg/max: {:?} / {:?}",
+        human_avg_drift, max_human_drift
+    ));
+    logger.logln(&format!(
+        "[STATS] Bot Drift avg/max: {:?} / {:?}",
+        bot_avg_drift, max_bot_drift
+    ));
     if let Some((p50, p90, p99)) = human_drift_percentiles {
         if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-            println!("[STATS] Human Drift p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+            logger.logln(&format!(
+                "[STATS] Human Drift p50/p90/p99: {:?} / {:?} / {:?}",
+                p50, p90, p99
+            ));
         }
     }
     if let Some((p50, p90, p99)) = bot_drift_percentiles {
         if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-            println!("[STATS] Bot Drift p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+            logger.logln(&format!(
+                "[STATS] Bot Drift p50/p90/p99: {:?} / {:?} / {:?}",
+                p50, p90, p99
+            ));
         }
     }
 
-    println!("\n======================= [LATENCY STATS] =======================");
-    println!("[STATS] Human Latency avg/max: {:?} / {:?}", human_avg_latency, max_human_latency);
-    println!("[STATS] Bot Latency avg/max: {:?} / {:?}", bot_avg_latency, max_bot_latency);
+    logger.logln("\n======================= [LATENCY STATS] =======================");
+    logger.logln(&format!(
+        "[STATS] Human Latency avg/max: {:?} / {:?}",
+        human_avg_latency, max_human_latency
+    ));
+    logger.logln(&format!(
+        "[STATS] Bot Latency avg/max: {:?} / {:?}",
+        bot_avg_latency, max_bot_latency
+    ));
     if let Some((p50, p90, p99)) = human_latency_percentiles {
         if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-            println!("[STATS] Human Latency p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+            logger.logln(&format!(
+                "[STATS] Human Latency p50/p90/p99: {:?} / {:?} / {:?}",
+                p50, p90, p99
+            ));
         }
     }
     if let Some((p50, p90, p99)) = bot_latency_percentiles {
         if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-            println!("[STATS] Bot Latency p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+            logger.logln(&format!(
+                "[STATS] Bot Latency p50/p90/p99: {:?} / {:?} / {:?}",
+                p50, p90, p99
+            ));
         }
     }
 
     if stats.jitter_samples > 0 {
-        println!("\n======================= [JITTER STATS] =======================");
-        println!("[STATS] Human Jitter avg/max (windowed): {:?} / {:?}", human_avg_jitter, max_human_jitter);
-        println!("[STATS] Bot Jitter avg/max (windowed): {:?} / {:?}", bot_avg_jitter, max_bot_jitter);
+        logger.logln("\n======================= [JITTER STATS] =======================");
+        logger.logln(&format!(
+            "[STATS] Human Jitter avg/max (windowed): {:?} / {:?}",
+            human_avg_jitter, max_human_jitter
+        ));
+        logger.logln(&format!(
+            "[STATS] Bot Jitter avg/max (windowed): {:?} / {:?}",
+            bot_avg_jitter, max_bot_jitter
+        ));
         if let Some((p50, p90, p99)) = human_jitter_percentiles {
             if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-                println!("[STATS] Human Jitter p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+                logger.logln(&format!(
+                    "[STATS] Human Jitter p50/p90/p99: {:?} / {:?} / {:?}",
+                    p50, p90, p99
+                ));
             }
         }
         if let Some((p50, p90, p99)) = bot_jitter_percentiles {
             if let (Some(p50), Some(p90), Some(p99)) = (p50, p90, p99) {
-                println!("[STATS] Bot Jitter p50/p90/p99: {:?} / {:?} / {:?}", p50, p90, p99);
+                logger.logln(&format!(
+                    "[STATS] Bot Jitter p50/p90/p99: {:?} / {:?} / {:?}",
+                    p50, p90, p99
+                ));
             }
         }
     } else {
-        println!("\n[STATS] Jitter: n/a");
+        logger.logln("\n[STATS] Jitter: n/a");
     }
 }
 
-pub fn update_degraded_mode(jitter: Duration, threshold_ms: u64, degraded: &AtomicBool) {
+// Function to update degraded mode status based on jitter
+pub fn update_degraded_mode(
+    jitter: Duration,
+    threshold_ms: u64,
+    degraded: &AtomicBool,
+    logger: &Logger,
+) {
     let threshold = Duration::from_millis(threshold_ms);
     let should_degrade = jitter > threshold;
     let was_active = degraded.swap(should_degrade, Ordering::SeqCst);
 
     if should_degrade && !was_active {
-        println!("[DEGRADED MODE] Jitter threshold exceeded. Prioritizing human packets.");
+        logger.logln("[DEGRADED MODE] Jitter threshold exceeded. Prioritizing human packets.");
     } else if !should_degrade && was_active {
-        println!("[RECOVERED] Jitter back under threshold. Bot packets resumed.");
+        logger.logln("[RECOVERED] Jitter back under threshold. Bot packets resumed.");
     }
 }
 
-pub fn print_top_three(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
+// Function to print the top 3 domains in the leaderboard, showing their edit counts
+pub fn print_top_three(leaderboard: &Arc<Mutex<HashMap<String, u64>>>, logger: &Logger) {
     let Ok(map) = leaderboard.lock() else {
         return;
     };
 
     if map.is_empty() {
-        println!("[LEADERBOARD] No data yet.");
+        logger.logln("[LEADERBOARD] No data yet.");
         return;
     }
 
-    println!("\n\n[LEADERBOARD] Top 3 Domains:");
+    logger.logln("\n\n[LEADERBOARD] Top 3 Domains:");
 
     let mut items: Vec<_> = map.iter().collect();
     // Sort by count descending, then domain ascending
     items.sort_by(|a, b| b.1.cmp(a.1).then_with(|| a.0.cmp(b.0)));
 
-    println!("+--------------------------------+----------+");
-    println!("| {:<30} | {:>8} |", "Domain", "Edits");
-    println!("+--------------------------------+----------+");
+    logger.logln("+--------------------------------+----------+");
+    logger.logln(&format!("| {:<30} | {:>8} |", "Domain", "Edits"));
+    logger.logln("+--------------------------------+----------+");
 
     for (domain, count) in items.into_iter().take(3) {
         // Truncate domain if it's too long for the table
@@ -359,19 +442,20 @@ pub fn print_top_three(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
             domain
         };
         
-        println!("| {:<30} | {:>8} |", display_domain, count);
+        logger.logln(&format!("| {:<30} | {:>8} |", display_domain, count));
     }
 
-    println!("+--------------------------------+----------+\n");
+    logger.logln("+--------------------------------+----------+\n");
 }
 
-pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
+// Function to print the final leaderboard at the end of the run, showing top 10 domains
+pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>, logger: &Logger) {
     let Ok(map) = leaderboard.lock() else {
         return;
     };
 
     if map.is_empty() {
-        println!("\n[FINAL LEADERBOARD] No data processed yet.\n");
+        logger.logln("\n[FINAL LEADERBOARD] No data processed yet.\n");
         return;
     }
 
@@ -379,10 +463,10 @@ pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
     // Sort by count descending, then by domain name ascending
     items.sort_by(|a, b| b.1.cmp(a.1).then_with(|| a.0.cmp(b.0)));
 
-    println!("\n========== [FINAL LEADERBOARD - TOP 10] ==========");
-    println!("+------+--------------------------------+----------+");
-    println!("| {:<4} | {:<30} | {:>8} |", "Rank", "Domain", "Edits");
-    println!("+------+--------------------------------+----------+");
+    logger.logln("\n========== [FINAL LEADERBOARD - TOP 10] ==========");
+    logger.logln("+------+--------------------------------+----------+");
+    logger.logln(&format!("| {:<4} | {:<30} | {:>8} |", "Rank", "Domain", "Edits"));
+    logger.logln("+------+--------------------------------+----------+");
 
     for (index, (domain, count)) in items.into_iter().take(10).enumerate() {
         // Truncate long domain names to prevent breaking table borders
@@ -392,13 +476,77 @@ pub fn print_final_leaderboard(leaderboard: &Arc<Mutex<HashMap<String, u64>>>) {
             domain.to_string()
         };
 
-        println!(
+        logger.logln(&format!(
             "| {:<4} | {:<30} | {:>8} |",
             index + 1,
             display_name,
             count
-        );
+        ));
     }
     
-    println!("+------+--------------------------------+----------+\n");
+    logger.logln("+------+--------------------------------+----------+\n");
+}
+
+// Shared packet handler for both async and threaded binaries
+pub fn handle_packet(
+    raw_json: String,
+    enqueue_time: Instant,
+    leaderboard: &Arc<Mutex<HashMap<String, u64>>>,
+    human_latencies: &Arc<Mutex<Vec<Duration>>>,
+    bot_latencies: &Arc<Mutex<Vec<Duration>>>,
+    human_jitters: &Arc<Mutex<Vec<Duration>>>,
+    bot_jitters: &Arc<Mutex<Vec<Duration>>>,
+    human_drifts: &Arc<Mutex<Vec<Duration>>>,
+    bot_drifts: &Arc<Mutex<Vec<Duration>>>,
+    run_stats: &Arc<Mutex<RunStats>>,
+    logger: &Logger,
+    degraded_mode: &AtomicBool,
+    jitter_threshold_ms: u64,
+    jitter_window_size: usize,
+    total_packets: &std::sync::atomic::AtomicU64,
+    total_violations: &std::sync::atomic::AtomicU64,
+) {
+    let dequeue_time = Instant::now();
+    let drift = dequeue_time.duration_since(enqueue_time);
+    let (violated, latency) = process_event(&raw_json, dequeue_time, leaderboard);
+    total_packets.fetch_add(1, Ordering::SeqCst);
+
+    // Record drift in the appropriate list
+    if let Ok(edit) = serde_json::from_str::<WikipediaEdit>(&raw_json) {
+        let drift_list = if edit.bot { bot_drifts } else { human_drifts };
+        if let Ok(mut list) = drift_list.lock() {
+            list.push(drift);
+        }
+        let jitter = if edit.bot {
+            record_jitter(bot_latencies, latency, jitter_window_size)
+        } else {
+            record_jitter(human_latencies, latency, jitter_window_size)
+        };
+
+        // Update degraded mode status based on jitter and record jitter values
+        if let Some(jitter) = jitter {
+            update_degraded_mode(jitter, jitter_threshold_ms, degraded_mode, logger);
+            let jitter_list = if edit.bot { bot_jitters } else { human_jitters };
+            if let Ok(mut list) = jitter_list.lock() {
+                list.push(jitter);
+            }
+        }
+        if let Ok(mut stats) = run_stats.lock() {
+            stats.record(drift, latency, violated, jitter);
+        }
+
+        // Log violations in red, normal packets in default color
+        if violated {
+            total_violations.fetch_add(1, Ordering::SeqCst);
+            logger.logln(&format!(
+                "\x1b[31m[VIOLATION]\x1b[0m {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
+                edit.server, edit.bot, edit.user, drift, latency
+            ));
+        } else {
+            logger.logln(&format!(
+                "[OK] Server: {} | Bot: {} | User: {} | Drift: {:?} | Latency: {:?}",
+                edit.server, edit.bot, edit.user, drift, latency
+            ));
+        }
+    }
 }
