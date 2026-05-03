@@ -22,7 +22,7 @@ use rts_wiki::{handle_packet, print_final_leaderboard, print_final_statistics, p
 
 // Set run duration here
 static MINUTES: u64 = 1;
-const RUN_DURATION: Duration = Duration::from_secs(MINUTES * 10);
+const RUN_DURATION: Duration = Duration::from_secs(MINUTES * 60);
 
 fn start_blocking_ingestion(
     tx_human: mpsc::SyncSender<(String, Instant)>,

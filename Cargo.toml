@@ -15,8 +15,8 @@ futures-util = "0.3"
 criterion = { version = "0.5", features = ["html_reports"] }
 
 [[bench]]
-name = "syncbench"
-path = "benches/syncbench.rs"
+name = "primitives"
+path = "benches/primitives.rs"
 harness = false
 
 [[bench]]
