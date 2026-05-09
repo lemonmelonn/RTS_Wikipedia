@@ -21,7 +21,7 @@ const JITTER_WINDOW_SIZE: usize = 100;
 use rts_wiki::{handle_packet, print_final_leaderboard, print_final_statistics, print_top_three, Logger, RunStats, WikipediaEdit};
 
 // Set run duration here
-static MINUTES: u64 = 3;
+static MINUTES: u64 = 5;
 const RUN_DURATION: Duration = Duration::from_secs(MINUTES * 60);
 
 fn start_blocking_ingestion(
