@@ -1,6 +1,6 @@
 # RTS Wikipedia
 
-Individual assignment for "Real Time Systems" module at APU. (Degree)
+Individual assignment for "Real Time Systems" module at APU. (Degree) <br>
 A real-time systems project in Rust that ingests the live Wikipedia edit stream and compares two processing architectures:
 
 - **Async** (Tokio) – `src/bin/async_pipeline.rs`
