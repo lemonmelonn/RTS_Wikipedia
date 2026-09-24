@@ -1,6 +1,6 @@
 // Benchmarks for comparing threaded vs async models
 use criterion::{criterion_group, criterion_main, Criterion};
-use std::time::{Instant, Duration};
+use std::time::{Instant};
 use std::thread;
 use tokio::runtime::Runtime;
 use std::sync::atomic::{AtomicBool, Ordering};
